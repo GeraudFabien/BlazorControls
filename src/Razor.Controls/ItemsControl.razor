@@ -1,0 +1,43 @@
+﻿@typeparam TItem
+@using Models
+
+@if (Items.Any())
+{
+    int i = 0;
+    @foreach (var item in Items)
+    {
+        @ItemTemplate(new ItemControlContext<TItem>(item, i % AlternationCount))
+    }
+}
+else
+{
+    @EmptyTemplate
+}
+
+@code {
+    [Parameter]
+    public IEnumerable<TItem> Items { get; set; }
+
+    [Parameter]
+    public RenderFragment<IItemControlContext<TItem>> ItemTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment EmptyTemplate { get; set; } = (t) => { };
+
+    [Parameter]
+    public int AlternationCount { get; set; } = 1;
+
+
+    // I can't find a way to make these 
+    ////[Parameter]
+    ////public RenderFragment<RenderFragment> ItemPanel { get; set; } = (builder) => builder;
+
+    ////[Parameter]
+    ////public RenderFragment<RenderFragment> ItemPanelTemplate { get; set; } = (builder) => builder;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        ((System.Collections.Specialized.INotifyCollectionChanged)Items).CollectionChanged += (_, t) => { this.StateHasChanged(); };
+    }
+}

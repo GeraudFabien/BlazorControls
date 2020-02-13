@@ -1,0 +1,50 @@
+﻿@inject NavBarService navBarService
+
+<div class="top-row pl-4 navbar navbar-dark" @onclick="ToggleNavMenu">
+    <div class="navbar-brand" href="">Sample</div>
+    <button class="navbar-toggler">
+        <span class="navbar-toggler-icon"></span> gftuftuy
+    </button>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column">
+        <Razor.Controls.ItemsControl Items="@navBarService.Items">
+            <ItemTemplate>
+                <li class="nav-item px-3">
+                    @if (String.IsNullOrEmpty(context.Item.HRef))
+                    {
+                        <NavLink class="nav-link" href="" Match="@NavLinkMatch.All">
+                            <span class="oi oi-home" aria-hidden="true"></span> Home
+                        </NavLink>
+                    }
+                    else
+                    {
+                        <NavLink class="nav-link" href="@context.Item.HRef">
+                            <span class="oi oi-plus" aria-hidden="true"></span> @context.Item.DisplayName
+                        </NavLink>
+                    }
+                </li>
+            </ItemTemplate>
+        </Razor.Controls.ItemsControl>
+    </ul>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        navBarService.Items.Add(new NavBarItem() { DisplayName = "Home" });
+        navBarService.Items.Add(new NavBarItem() { DisplayName = "Counter", HRef = "counter" });
+        navBarService.Items.Add(new NavBarItem() { DisplayName = "Fetch data", HRef = "fetchdata" });
+    }
+}

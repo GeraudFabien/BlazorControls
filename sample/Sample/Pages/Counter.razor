@@ -1,0 +1,29 @@
+﻿@page "/counter"
+@page "/counter/{CurrentCount:int}"
+@inject NavBarService navBarService
+@inject ILanguageDictionary locale
+
+<h1>Counter</h1>
+
+<p>Current count: @CurrentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">@locale["ClickMe"]</button>
+
+@code {
+    [Parameter]
+    public int CurrentCount { get; set; } = 0;
+
+    private void IncrementCount()
+    {
+        CurrentCount++;
+        navBarService.Items.Add(new NavBarItem() { HRef = $"/counter/{CurrentCount}", DisplayName = $"Counter : {CurrentCount}" });
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        // TODO : I didn't find another way to update the full application
+        locale.PropertyChanged += (_, t) => StateHasChanged();
+    }
+}
